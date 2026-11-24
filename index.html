@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Voice Practice</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>English Voice Practice</h2>
+
+    <!-- Upload JSON button -->
+    <div class="upload-section">
+      <label for="json-file" class="upload-btn">📂 Load Questions (.json)</label>
+      <input type="file" id="json-file" accept=".json,application/json" hidden>
+      <span id="file-status" class="file-status">No file loaded</span>
+    </div>
+
+    <p id="progress" class="progress"></p>
+    <p id="question-text" class="question">Load a JSON file to start practicing</p>
+    
+    <div class="controls">
+      <button id="repeat-btn" disabled>🔊 Repeat</button>
+      <button id="mic-btn" disabled>🎤 Speak</button>
+    </div>
+
+    <p id="status" class="status"></p>
+    <p id="user-answer" class="transcript"></p>
+    <p id="feedback" class="feedback"></p>
+
+    <button id="next-btn" class="next-btn" disabled>Next Question</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

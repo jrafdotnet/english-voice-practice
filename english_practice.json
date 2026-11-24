@@ -1,0 +1,19 @@
+[
+  {
+    "question": "How do you say 'No lo sé' in English?",
+    "answers": ["I don't know", "I do not know"]
+  },
+  {
+    "question": "What is the past tense of the verb 'go'?",
+    "answers": ["went", "I went"]
+  },
+  {
+    "question": "Complete the sentence: She is going to the...",
+    "answers": ["store", "supermarket", "beach", "park"]
+  },
+  {
+    "question": "Say the number two",
+    "answers": ["two", "2"]
+  }
+]
+
