@@ -1,0 +1,102 @@
+[
+  {
+    "question": "Conjugate: Verb: be | Simple Present | 3rd Person Negative (with a complement)",
+    "answers": ["he is not ready", "he isn't ready", "she is not here", "she isn't here", "it is not working", "it isn't working"]
+  },
+  {
+    "question": "Conjugate: Verb: have | Simple Past | 1st Person Affirmative (with a complement)",
+    "answers": ["I had a meeting", "we had breakfast"]
+  },
+  {
+    "question": "Conjugate: Verb: do | Present Continuous | 3rd Person Interrogative (with a complement)",
+    "answers": ["is he doing his homework", "is she doing the dishes", "are they doing the work"]
+  },
+  {
+    "question": "Conjugate: Verb: say | Present Perfect | 1st Person Affirmative (with a complement)",
+    "answers": ["I have said that already", "we have said enough"]
+  },
+  {
+    "question": "Conjugate: Verb: go | Past Continuous | 3rd Person Negative (with a complement)",
+    "answers": ["he was not going home", "he wasn't going home", "she was not going to work", "she wasn't going to work", "they were not going there", "they weren't going there"]
+  },
+  {
+    "question": "Conjugate: Verb: get | Simple Future | 1st Person Affirmative (with a complement)",
+    "answers": ["I will get a new job", "I'll get a new job", "we will get ready soon"]
+  },
+  {
+    "question": "Conjugate: Verb: make | Past Continuous | 3rd Person Negative (with a complement)",
+    "answers": ["he was not making dinner", "he wasn't making dinner", "she was not making coffee", "she wasn't making coffee", "they were not making plans", "they weren't making plans"]
+  },
+  {
+    "question": "Conjugate: Verb: know | Simple Present | 1st Person Negative (with a complement)",
+    "answers": ["I do not know the answer", "I don't know the answer", "we do not know the way", "we don't know the way"]
+  },
+  {
+    "question": "Conjugate: Verb: think | Past Perfect | 3rd Person Affirmative (with a complement)",
+    "answers": ["he had thought about it", "she had thought of a plan", "they had thought differently"]
+  },
+  {
+    "question": "Conjugate: Verb: take | Simple Past | 3rd Person Interrogative (with a complement)",
+    "answers": ["did he take the bus", "did she take her medicine", "did they take photos"]
+  },
+  {
+    "question": "Conjugate: Verb: see | Present Perfect Continuous | 1st Person Affirmative (with a complement)",
+    "answers": ["I have been seeing a doctor", "we have been seeing progress"]
+  },
+  {
+    "question": "Conjugate: Verb: come | Future Continuous | 3rd Person Affirmative (with a complement)",
+    "answers": ["he will be coming soon", "she will be coming to the party", "they will be coming tomorrow"]
+  },
+  {
+    "question": "Conjugate: Verb: want | Simple Present | 3rd Person Affirmative (with a complement)",
+    "answers": ["he wants a cup of coffee", "she wants to travel"]
+  },
+  {
+    "question": "Conjugate: Verb: look | Present Continuous | 1st Person Negative (with a complement)",
+    "answers": ["I am not looking at my phone", "I'm not looking at my phone", "we are not looking for trouble", "we aren't looking for trouble"]
+  },
+  {
+    "question": "Conjugate: Verb: use | Simple Past | 1st Person Affirmative (with a complement)",
+    "answers": ["I used a new tool", "we used the old computer"]
+  },
+  {
+    "question": "Conjugate: Verb: find | Present Perfect | 3rd Person Negative (with a complement)",
+    "answers": ["he has not found his keys", "he hasn't found his keys", "she has not found a solution", "she hasn't found a solution"]
+  },
+  {
+    "question": "Conjugate: Verb: give | Simple Future | 3rd Person Interrogative (with a complement)",
+    "answers": ["will he give us a call", "will she give a presentation", "will they give a discount"]
+  },
+  {
+    "question": "Conjugate: Verb: tell | Past Continuous | 1st Person Affirmative (with a complement)",
+    "answers": ["I was telling the truth", "we were telling a story"]
+  },
+  {
+    "question": "Conjugate: Verb: work | Present Perfect Continuous | 3rd Person Affirmative (with a complement)",
+    "answers": ["he has been working all day", "she has been working on the project", "they have been working hard"]
+  },
+  {
+    "question": "Conjugate: Verb: call | Simple Past | 3rd Person Negative (with a complement)",
+    "answers": ["he did not call me", "he didn't call me", "she did not call back", "she didn't call back"]
+  },
+  {
+    "question": "Conjugate: Verb: try | Future Perfect | 1st Person Affirmative (with a complement)",
+    "answers": ["I will have tried everything", "we will have tried twice"]
+  },
+  {
+    "question": "Conjugate: Verb: ask | Simple Present | 3rd Person Interrogative (with a complement)",
+    "answers": ["does he ask many questions", "does she ask for help", "do they ask permission"]
+  },
+  {
+    "question": "Conjugate: Verb: need | Past Perfect | 1st Person Negative (with a complement)",
+    "answers": ["I had not needed help", "I hadn't needed help", "we had not needed more time", "we hadn't needed more time"]
+  },
+  {
+    "question": "Conjugate: Verb: feel | Present Continuous | 3rd Person Affirmative (with a complement)",
+    "answers": ["he is feeling better today", "she is feeling tired now", "they are feeling confident"]
+  },
+  {
+    "question": "Conjugate: Verb: become | Simple Past | 3rd Person Affirmative (with a complement)",
+    "answers": ["he became a doctor", "she became a manager", "they became friends"]
+  }
+]

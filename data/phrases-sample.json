@@ -1,0 +1,332 @@
+[
+  {
+    "phrase": "Ordering coffee and breakfast"
+  },
+  {
+    "phrase": "Asking for directions to a pharmacy"
+  },
+  {
+    "phrase": "Buying groceries at a local market"
+  },
+  {
+    "phrase": "Checking the bill at a restaurant"
+  },
+  {
+    "phrase": "Making a dentist appointment by phone"
+  },
+  {
+    "phrase": "Returning a defective gadget at a store"
+  },
+  {
+    "phrase": "Talking to a neighbor about noise"
+  },
+  {
+    "phrase": "Calling internet support for slow connection"
+  },
+  {
+    "phrase": "Splitting the bill with friends"
+  },
+  {
+    "phrase": "Asking a pharmacist for cold medicine"
+  },
+  {
+    "phrase": "Hiring a handyman for a home repair"
+  },
+  {
+    "phrase": "Comparing two smartphones in an electronics store"
+  },
+  {
+    "phrase": "Negotiating rent renewal with a landlord"
+  },
+  {
+    "phrase": "Filing a complaint about a delayed delivery"
+  },
+  {
+    "phrase": "Explaining dietary restrictions at a dinner party"
+  },
+  {
+    "phrase": "Discussing household chores distribution"
+  },
+  {
+    "phrase": "Dealing with an unauthorized bank charge"
+  },
+  {
+    "phrase": "Persuading a store manager to honor an expired promo"
+  },
+  {
+    "phrase": "Mediating a disagreement between two neighbors"
+  },
+  {
+    "phrase": "Explaining a complex warranty claim"
+  },
+  {
+    "phrase": "Introducing yourself on your first day"
+  },
+  {
+    "phrase": "Asking a colleague for help with a file"
+  },
+  {
+    "phrase": "Confirming a meeting time"
+  },
+  {
+    "phrase": "Giving a quick daily stand-up update"
+  },
+  {
+    "phrase": "Apologizing for joining a video call late"
+  },
+  {
+    "phrase": "Requesting time off from your manager"
+  },
+  {
+    "phrase": "Asking a coworker to review your work"
+  },
+  {
+    "phrase": "Explaining why a deadline needs to be extended"
+  },
+  {
+    "phrase": "Clarifying ambiguous project requirements"
+  },
+  {
+    "phrase": "Disagreeing politely in a team meeting"
+  },
+  {
+    "phrase": "Onboarding a new team member"
+  },
+  {
+    "phrase": "Summarizing action items at the end of a call"
+  },
+  {
+    "phrase": "Reporting a critical bug to a project manager"
+  },
+  {
+    "phrase": "Asking for better documentation from another team"
+  },
+  {
+    "phrase": "Negotiating scope creep with a client"
+  },
+  {
+    "phrase": "Presenting trade-offs between two architectures"
+  },
+  {
+    "phrase": "Handling a tough question during a demo"
+  },
+  {
+    "phrase": "Giving constructive feedback to a peer"
+  },
+  {
+    "phrase": "Convincing leadership to invest in refactoring"
+  },
+  {
+    "phrase": "Conducting a post-mortem after a system outage"
+  },
+  {
+    "phrase": "Interviewing for a senior technical role"
+  },
+  {
+    "phrase": "Explaining a technical concept to a non-technical stakeholder"
+  },
+  {
+    "phrase": "Declining an unrealistic request diplomatically"
+  },
+  {
+    "phrase": "Pitching a process improvement idea"
+  },
+  {
+    "phrase": "Resolving a priority conflict between two managers"
+  },
+  {
+    "phrase": "Checking in at an airport counter"
+  },
+  {
+    "phrase": "Ordering food on an airplane"
+  },
+  {
+    "phrase": "Asking for the Wi-Fi password at a hotel"
+  },
+  {
+    "phrase": "Reporting lost luggage at the airport"
+  },
+  {
+    "phrase": "Changing a hotel room due to a problem"
+  },
+  {
+    "phrase": "Renting a car and asking about insurance"
+  },
+  {
+    "phrase": "Passing through customs and immigration"
+  },
+  {
+    "phrase": "Asking a local for restaurant recommendations"
+  },
+  {
+    "phrase": "Rebooking a missed connecting flight"
+  },
+  {
+    "phrase": "Dealing with a sudden change in travel plans"
+  },
+  {
+    "phrase": "Explaining a minor medical issue abroad"
+  },
+  {
+    "phrase": "Negotiating a taxi fare before getting in"
+  },
+  {
+    "phrase": "Resolving an overbooked hotel reservation"
+  },
+  {
+    "phrase": "Reporting a stolen wallet at a police station"
+  },
+  {
+    "phrase": "Debating sustainable tourism with fellow travelers"
+  },
+  {
+    "phrase": "Buying a train ticket with a transfer"
+  },
+  {
+    "phrase": "Asking for help when your car breaks down"
+  },
+  {
+    "phrase": "Requesting a late checkout at a hotel"
+  },
+  {
+    "phrase": "Complaining about misleading tour advertising"
+  },
+  {
+    "phrase": "Helping a lost tourist navigate a complex transit system"
+  },
+  {
+    "phrase": "Making small talk about the weather"
+  },
+  {
+    "phrase": "Talking about your favorite hobbies"
+  },
+  {
+    "phrase": "Inviting a friend to grab a drink or coffee"
+  },
+  {
+    "phrase": "Recommending a movie or series you watched recently"
+  },
+  {
+    "phrase": "Talking about music and concerts"
+  },
+  {
+    "phrase": "Explaining the rules of a game or sport"
+  },
+  {
+    "phrase": "Catching up with an old friend"
+  },
+  {
+    "phrase": "Discussing books vs. movie adaptations"
+  },
+  {
+    "phrase": "Talking about fitness and healthy routines"
+  },
+  {
+    "phrase": "Explaining a cultural tradition from your country"
+  },
+  {
+    "phrase": "Sharing a funny mistake you made while learning English"
+  },
+  {
+    "phrase": "Discussing the pros and cons of social media"
+  },
+  {
+    "phrase": "Debating whether artificial intelligence helps or hurts creativity"
+  },
+  {
+    "phrase": "Talking about lifelong learning in adulthood"
+  },
+  {
+    "phrase": "Analyzing why certain habits stick while others fail"
+  },
+  {
+    "phrase": "Discussing work-life balance in modern cities"
+  },
+  {
+    "phrase": "Exploring how music influences focus and mood"
+  },
+  {
+    "phrase": "Politely declining an invitation"
+  },
+  {
+    "phrase": "Giving advice to a friend feeling overwhelmed"
+  },
+  {
+    "phrase": "Talking about your favorite childhood memories"
+  },
+  {
+    "phrase": "Discussing the impact of streaming on music and cinema"
+  },
+  {
+    "phrase": "Sharing your philosophy on time management"
+  },
+  {
+    "phrase": "Debating minimalism vs. collecting things you love"
+  },
+  {
+    "phrase": "Describing a memorable family gathering"
+  },
+  {
+    "phrase": "Reflecting on a book or idea that changed your perspective"
+  },
+  {
+    "phrase": "Defending an unpopular opinion respectfully"
+  },
+  {
+    "phrase": "Handling an awkward silence in a networking event"
+  },
+  {
+    "phrase": "Explaining why you changed your mind on an important topic"
+  },
+  {
+    "phrase": "Negotiating a price on a second-hand item"
+  },
+  {
+    "phrase": "Clarifying a misunderstood joke or sarcasm"
+  },
+  {
+    "phrase": "Persuading a skeptical friend to try something new"
+  },
+  {
+    "phrase": "Summarizing a complex news story objectively"
+  },
+  {
+    "phrase": "Responding to unfair criticism calmly"
+  },
+  {
+    "phrase": "Brainstorming solutions for a community problem"
+  },
+  {
+    "phrase": "Giving an impromptu toast at a celebration"
+  },
+  {
+    "phrase": "Comparing short-term gains vs. long-term investments"
+  },
+  {
+    "phrase": "Discussing ethical boundaries in automation"
+  },
+  {
+    "phrase": "Explaining how you troubleshoot an unknown problem"
+  },
+  {
+    "phrase": "Roleplay: Convincing a co-founder to pivot a product"
+  },
+  {
+    "phrase": "Roleplay: Handling a difficult customer support escalation"
+  },
+  {
+    "phrase": "Discussing how language shapes humor and wordplay"
+  },
+  {
+    "phrase": "Evaluating the pros and cons of specialization vs. generalism"
+  },
+  {
+    "phrase": "Reflecting on what makes a conversation truly memorable"
+  },
+  {
+    "phrase": "Roleplay: Pitching yourself for an international collaboration"
+  },
+  {
+    "phrase": "Wrapping up a complex negotiation with clear next steps"
+  }
+]

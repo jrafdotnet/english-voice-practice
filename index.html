@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>English Voice Practice</title>
-  
+
   <!-- Ícono para pestaña de navegador -->
   <link rel="icon" type="image/png" href="./icon.png">
-  
+
   <!-- Ícono para acceso directo en iPhone / iPad -->
   <link rel="apple-touch-icon" href="./icon.png">
-  
+
   <!-- Manifiesto para acceso directo en Android -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0066cc">
@@ -21,29 +21,59 @@
   <div class="container">
     <h2>English Voice Practice</h2>
 
-    <!-- Upload JSON button -->
-    <div class="upload-section">
-      <label for="json-file" class="upload-btn">📂 Load Questions (.json)</label>
-      <input type="file" id="json-file" accept=".json,application/json" hidden>
-      <span id="file-status" class="file-status">No file loaded</span>
+    <!-- Fuente del JSON: Servidor vs Subir archivo -->
+    <div class="source-section">
+      <div class="radio-group" role="radiogroup" aria-label="JSON Source">
+        <label class="radio-option">
+          <input type="radio" name="json-source" id="source-server" value="server" checked>
+          <span>🌐 Server JSON</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="json-source" id="source-upload" value="upload">
+          <span>📂 Load JSON</span>
+        </label>
+      </div>
+
+      <!-- Opción 1: Dropdown de JSON en el servidor -->
+      <div id="server-panel" class="source-panel">
+        <select id="server-json-select" aria-label="Select server JSON">
+          <option value="">-- Select a JSON list --</option>
+          <option value="./data/qa-sample.json">Q&amp;A Sample (qa-sample.json)</option>
+          <option value="./data/phrases-sample.json">Phrases Sample (phrases-sample.json)</option>
+          <option value="./data/all_100_verbs_12_tenses.json">Verbs 12 tenses practice</option>
+
+        </select>
+      </div>
+
+      <!-- Opción 2: Cargar archivo JSON local -->
+      <div id="upload-panel" class="source-panel hidden">
+        <label for="json-file" class="upload-btn">📂 Choose JSON File (.json)</label>
+        <input type="file" id="json-file" accept=".json,application/json" hidden>
+      </div>
+
+      <span id="file-status" class="file-status">Select a server JSON or load a file</span>
     </div>
 
-    <p id="progress" class="progress"></p>
-    <p id="question-text" class="question">Load a JSON file to start practicing</p>
-    
+    <div class="meta-bar">
+      <p id="progress" class="progress"></p>
+      <button type="button" id="toggle-visibility-btn" class="visibility-btn" disabled>👁️ Show</button>
+    </div>
+
+    <p id="question-text" class="question">Select or load a JSON to start practicing</p>
+
     <div class="controls">
-      <button id="repeat-btn" disabled>🔊 Repeat</button>
-      <button id="mic-btn" disabled>🎤 Speak</button>
+      <button type="button" id="repeat-btn" disabled>🔊 Repeat</button>
+      <button type="button" id="mic-btn" disabled>🎤 Speak</button>
     </div>
 
     <p id="status" class="status"></p>
     <p id="user-answer" class="transcript"></p>
+    <div id="star-rating" class="star-rating" aria-label="Star rating"></div>
     <p id="feedback" class="feedback"></p>
 
-    <button id="next-btn" class="next-btn" disabled>Next Question</button>
+    <button type="button" id="next-btn" class="next-btn" disabled>Next Item</button>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
