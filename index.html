@@ -21,6 +21,22 @@
   <div class="container">
     <h2>English Voice Practice</h2>
 
+    <!-- API Key local (BYOK - guardada en este navegador) -->
+    <details class="api-key-box">
+      <summary>🔑 Gemini API Key (Saved in browser)</summary>
+      <div class="api-key-controls">
+        <input
+          type="password"
+          id="gemini-api-key-input"
+          placeholder="Paste your Gemini API key..."
+          autocomplete="off"
+        >
+        <button type="button" id="save-api-key-btn" class="small-btn">Save</button>
+        <button type="button" id="clear-api-key-btn" class="small-btn secondary-btn">Clear</button>
+      </div>
+      <span id="api-key-status" class="file-status"></span>
+    </details>
+
     <!-- Fuente del JSON: Servidor vs Subir archivo -->
     <div class="source-section">
       <div class="radio-group" role="radiogroup" aria-label="JSON Source">
@@ -38,10 +54,10 @@
       <div id="server-panel" class="source-panel">
         <select id="server-json-select" aria-label="Select server JSON">
           <option value="">-- Select a JSON list --</option>
+          <option value="./data/all_100_verbs_12_tenses_without_answers.json">100 Verbs 12 tenses</option>
+          <option value="./data/questions-only.json">Open Questions (questions-only.json)</option>
           <option value="./data/qa-sample.json">Q&amp;A Sample (qa-sample.json)</option>
           <option value="./data/phrases-sample.json">Phrases Sample (phrases-sample.json)</option>
-          <option value="./data/all_100_verbs_12_tenses.json">Verbs 12 tenses practice</option>
-
         </select>
       </div>
 

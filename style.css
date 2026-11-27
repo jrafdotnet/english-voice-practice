@@ -22,7 +22,50 @@ body {
 
 h2 {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+.api-key-box {
+  text-align: left;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+}
+
+.api-key-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #334155;
+}
+
+.api-key-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.api-key-controls input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.small-btn {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.secondary-btn {
+  background-color: #64748b;
 }
 
 .source-section {

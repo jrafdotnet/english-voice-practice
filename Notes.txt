@@ -1,0 +1,7 @@
+1. Cuándo usa la evaluación LOCAL (sin llamar al API de Google)
+JSON de solo frases ([{"phrase": "..."}]): evalúa en el navegador comparando el orden y número de palabras correctas (evaluateClosedSpeech). No llama a Gemini.
+
+JSON de preguntas con respuestas ([{"question": "...", "answers": ["..."]}]): si el elemento trae answers (o answer) con al menos una respuesta válida, el código lo clasifica como qa_closed y lo evalúa localmente contra esas respuestas esperadas. Tampoco llama a Gemini.
+
+2. Cuándo llama al API de Google (Gemini)
+JSON de solo preguntas ([{"question": "..."}]) sin answers: cuando un elemento solo tiene "question" y no tiene "answers"/"answer", el código lo clasifica como qa_open. Ahí es cuando envía la pregunta y lo que dijiste al API de Gemini (evaluateOpenQuestionWithGemini) para calificar con estrellas y darte una retroalimentación corta (incluyendo un ejemplo si fue incorrecta).

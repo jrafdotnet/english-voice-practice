@@ -3,13 +3,21 @@ let shuffledItems = [];
 let currentIndex = -1;
 let isTextVisible = false; // Oculto por defecto
 
+const STORAGE_API_KEY = 'english_voice_gemini_api_key';
+
 // DOM Elements
+const apiKeyInput = document.getElementById('gemini-api-key-input');
+const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
+const apiKeyStatus = document.getElementById('api-key-status');
+
 const sourceRadios = document.querySelectorAll('input[name="json-source"]');
 const serverPanel = document.getElementById('server-panel');
 const uploadPanel = document.getElementById('upload-panel');
 const serverJsonSelect = document.getElementById('server-json-select');
 const fileInput = document.getElementById('json-file');
 const fileStatus = document.getElementById('file-status');
+
 const progressEl = document.getElementById('progress');
 const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
 const questionText = document.getElementById('question-text');
@@ -20,6 +28,35 @@ const statusEl = document.getElementById('status');
 const userAnswerEl = document.getElementById('user-answer');
 const starRatingEl = document.getElementById('star-rating');
 const feedbackEl = document.getElementById('feedback');
+
+// API Key management (localStorage)
+function refreshApiKeyStatus() {
+  const saved = localStorage.getItem(STORAGE_API_KEY);
+  if (saved) {
+    apiKeyInput.value = saved;
+    apiKeyStatus.textContent = '✅ API key saved in this browser';
+  } else {
+    apiKeyInput.value = '';
+    apiKeyStatus.textContent = '⚠️ No API key saved (required for open questions)';
+  }
+}
+
+saveApiKeyBtn.addEventListener('click', () => {
+  const key = apiKeyInput.value.trim();
+  if (!key) {
+    apiKeyStatus.textContent = '❌ Enter a valid API key first';
+    return;
+  }
+  localStorage.setItem(STORAGE_API_KEY, key);
+  apiKeyStatus.textContent = '✅ API key saved in this browser';
+});
+
+clearApiKeyBtn.addEventListener('click', () => {
+  localStorage.removeItem(STORAGE_API_KEY);
+  refreshApiKeyStatus();
+});
+
+refreshApiKeyStatus();
 
 // Fisher-Yates shuffle for random order without repetition
 function shuffleArray(array) {
@@ -74,9 +111,10 @@ function resetSessionState() {
   nextBtn.disabled = true;
 }
 
-// Normaliza y valida ambos formatos:
-// - Q&A: { question: "...", answers: ["..."] } (o answer: "...")
-// - Phrase only: { phrase: "..." }
+// Normaliza y valida:
+// - Solo frase: { phrase: "..." }
+// - Pregunta + respuestas: { question: "...", answers: ["..."] }
+// - Solo pregunta abierta: { question: "..." }
 function parseAndNormalizeDataset(rawData) {
   if (!Array.isArray(rawData) || rawData.length === 0) {
     throw new Error('JSON must be a non-empty array.');
@@ -100,20 +138,16 @@ function parseAndNormalizeDataset(rawData) {
           ? [item.answer.trim()]
           : [];
 
-      if (answers.length === 0) {
-        throw new Error('Q&A item missing valid answers.');
-      }
-
       const question = item.question.trim();
       return {
-        type: 'qa',
+        type: answers.length > 0 ? 'qa_closed' : 'qa_open',
         displayPrompt: question,
         spokenPrompt: question,
         expectedTargets: answers
       };
     }
 
-    throw new Error('Each item must contain "phrase" or "question" + "answers".');
+    throw new Error('Each item must contain "phrase" or "question".');
   });
 }
 
@@ -196,7 +230,7 @@ fileInput.addEventListener('change', (event) => {
 const synth = window.speechSynthesis;
 
 function speak(text) {
-  if (!synth) return;
+  if (!synth || !text) return;
   synth.cancel();
   setTimeout(() => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -280,7 +314,7 @@ function normalizeEnglish(text) {
     .trim();
 }
 
-// Calcula el número de palabras coincidentes EN ORDEN (Longest Common Subsequence en tokens)
+// Calcula palabras coincidentes EN ORDEN (LCS sobre palabras)
 function orderedMatchedWordsCount(expectedWords, spokenWords) {
   const m = expectedWords.length;
   const n = spokenWords.length;
@@ -301,8 +335,8 @@ function orderedMatchedWordsCount(expectedWords, spokenWords) {
   return dp[m][n];
 }
 
-// Evalúa alternativas habladas frente a respuestas/frases válidas considerando orden y número de palabras correctas
-function evaluateSpeech(alternatives, validTargets) {
+// Evalúa frases o respuestas cerradas por orden y número de palabras correctas
+function evaluateClosedSpeech(alternatives, validTargets) {
   let bestResult = {
     stars: 0,
     matchedWords: 0,
@@ -321,7 +355,6 @@ function evaluateSpeech(alternatives, validTargets) {
       const totalWords = Math.max(targetWords.length, 1);
 
       const matched = orderedMatchedWordsCount(targetWords, spokenWords);
-      // Penaliza ligeramente palabras extra fuera de lugar para premiar orden y precisión
       const extraWordsPenalty = Math.max(0, spokenWords.length - matched) * 0.15;
       const rawRatio = Math.max(0, (matched - extraWordsPenalty) / totalWords);
       const ratio = spokenNorm === targetNorm ? 1 : Math.min(1, rawRatio);
@@ -349,6 +382,57 @@ function evaluateSpeech(alternatives, validTargets) {
   }
 
   return bestResult;
+}
+
+// Evalúa preguntas abiertas con Gemini y da ejemplo corto si no es correcta
+async function evaluateOpenQuestionWithGemini(question, spokenAlternatives) {
+  const apiKey = localStorage.getItem(STORAGE_API_KEY);
+  if (!apiKey) {
+    throw new Error('Missing Gemini API key.');
+  }
+
+  const prompt = [
+    'You are a concise English speaking tutor.',
+    `Question: "${question}"`,
+    `Spoken transcripts (top alternatives): ${JSON.stringify(spokenAlternatives)}`,
+    'Judge if the student answered the question properly and naturally in English (accept valid personal details like names and natural contractions).',
+    'Rate from 0 to 5 stars considering relevance to the question, word order, and English correctness.',
+    'Keep "feedback" VERY SHORT (max 1 short sentence).',
+    'If stars < 4 or the answer is wrong/off-topic, start with "Incorrect. You can say: " followed by a brief natural example answer (e.g., "Incorrect. You can say: My name is John.").',
+    'If stars >= 4, give a short positive note (e.g., "Great answer!").',
+    'Respond ONLY with valid JSON: {"stars": 0..5, "feedback": "..."}'
+  ].join('\n');
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: 'application/json'
+      }
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  const parsed = JSON.parse(rawText);
+
+  const stars = Math.max(0, Math.min(5, Number(parsed.stars) || 0));
+  const feedback = typeof parsed.feedback === 'string' && parsed.feedback.trim()
+    ? parsed.feedback.trim()
+    : stars >= 4
+      ? 'Great answer!'
+      : 'Incorrect. Try answering the question directly.';
+
+  return { stars, feedback };
 }
 
 function renderStars(stars) {
@@ -396,7 +480,7 @@ function loadNextItem() {
     statusEl.textContent = '';
   }
 
-  isTextVisible = false; // Siempre oculta al iniciar cada ítem
+  isTextVisible = false; // Siempre oculta por defecto
   const currentItem = shuffledItems[currentIndex];
 
   progressEl.textContent = `Item ${currentIndex + 1} of ${shuffledItems.length}`;
@@ -439,14 +523,44 @@ if (recognition) {
     statusEl.textContent = 'Listening... speak in English.';
   };
 
-  recognition.onresult = (event) => {
+  recognition.onresult = async (event) => {
     const alternatives = Array.from(event.results[0]).map((alt) => alt.transcript);
     const primarySpoken = alternatives[0];
     const currentItem = shuffledItems[currentIndex];
 
     userAnswerEl.textContent = `You said: "${primarySpoken}"`;
 
-    const result = evaluateSpeech(alternatives, currentItem.expectedTargets);
+    if (currentItem.type === 'qa_open') {
+      statusEl.textContent = 'Evaluating with Gemini...';
+      micBtn.disabled = true;
+
+      try {
+        const aiResult = await evaluateOpenQuestionWithGemini(currentItem.spokenPrompt, alternatives);
+        starRatingEl.textContent = renderStars(aiResult.stars);
+        feedbackEl.textContent = aiResult.feedback;
+
+        if (aiResult.stars >= 4) {
+          feedbackEl.className = 'feedback correct';
+        } else if (aiResult.stars >= 2) {
+          feedbackEl.className = 'feedback partial';
+        } else {
+          feedbackEl.className = 'feedback incorrect';
+        }
+
+        speak(aiResult.feedback);
+      } catch (err) {
+        starRatingEl.textContent = '☆☆☆☆☆ (0/5)';
+        feedbackEl.textContent = 'Incorrect. Save a valid Gemini API key to evaluate open questions.';
+        feedbackEl.className = 'feedback incorrect';
+      } finally {
+        statusEl.textContent = '';
+        micBtn.disabled = false;
+      }
+      return;
+    }
+
+    // Modo cerrado: frase o pregunta con respuestas esperadas
+    const result = evaluateClosedSpeech(alternatives, currentItem.expectedTargets);
     starRatingEl.textContent = renderStars(result.stars);
 
     if (result.stars >= 4) {
@@ -454,20 +568,22 @@ if (recognition) {
       feedbackEl.className = 'feedback correct';
       speak('Great job!');
     } else if (result.stars >= 2) {
-      feedbackEl.textContent = `Partial (${result.matchedWords}/${result.totalWords} ordered words). Expected: ${result.bestTarget}`;
+      feedbackEl.textContent = `Incorrect. You can say: ${result.bestTarget}`;
       feedbackEl.className = 'feedback partial';
-      speak(`Almost. Expected: ${result.bestTarget}`);
+      speak(`Incorrect. You can say: ${result.bestTarget}`);
     } else {
-      feedbackEl.textContent = `Try again (${result.matchedWords}/${result.totalWords} ordered words). Expected: ${result.bestTarget}`;
+      feedbackEl.textContent = `Incorrect. You can say: ${result.bestTarget}`;
       feedbackEl.className = 'feedback incorrect';
-      speak(`Expected: ${result.bestTarget}`);
+      speak(`Incorrect. You can say: ${result.bestTarget}`);
     }
   };
 
   recognition.onspeechend = () => {
     recognition.stop();
     micBtn.classList.remove('listening');
-    statusEl.textContent = '';
+    if (statusEl.textContent === 'Listening... speak in English.') {
+      statusEl.textContent = '';
+    }
   };
 
   recognition.onerror = (event) => {
