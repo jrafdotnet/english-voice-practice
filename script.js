@@ -403,7 +403,7 @@ async function evaluateOpenQuestionWithGemini(question, spokenAlternatives) {
     'Respond ONLY with valid JSON: {"stars": 0..5, "feedback": "..."}'
   ].join('\n');
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${encodeURIComponent(apiKey)}`;
 
   const response = await fetch(url, {
     method: 'POST',
@@ -552,6 +552,7 @@ if (recognition) {
         starRatingEl.textContent = '☆☆☆☆☆ (0/5)';
         feedbackEl.textContent = 'Incorrect. Save a valid Gemini API key to evaluate open questions.';
         feedbackEl.className = 'feedback incorrect';
+        console.log(err)
       } finally {
         statusEl.textContent = '';
         micBtn.disabled = false;
