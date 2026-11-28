@@ -4,12 +4,17 @@ let currentIndex = -1;
 let isTextVisible = false; // Oculto por defecto
 
 const STORAGE_API_KEY = 'english_voice_gemini_api_key';
+const STORAGE_SPEED_KEY = 'english_voice_speech_rate';
+const STORAGE_VOICE_KEY = 'english_voice_selected_name';
 
 // DOM Elements
 const apiKeyInput = document.getElementById('gemini-api-key-input');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const clearApiKeyBtn = document.getElementById('clear-api-key-btn');
 const apiKeyStatus = document.getElementById('api-key-status');
+
+const speedSelect = document.getElementById('speed-select');
+const voiceSelect = document.getElementById('voice-select');
 
 const sourceRadios = document.querySelectorAll('input[name="json-source"]');
 const serverPanel = document.getElementById('server-panel');
@@ -20,6 +25,7 @@ const fileStatus = document.getElementById('file-status');
 
 const progressEl = document.getElementById('progress');
 const toggleVisibilityBtn = document.getElementById('toggle-visibility-btn');
+const questionImage = document.getElementById('question-image');
 const questionText = document.getElementById('question-text');
 const repeatBtn = document.getElementById('repeat-btn');
 const micBtn = document.getElementById('mic-btn');
@@ -57,6 +63,73 @@ clearApiKeyBtn.addEventListener('click', () => {
 });
 
 refreshApiKeyStatus();
+
+// Speech Speed & Voices (2 to 3 English voices)
+const synth = window.speechSynthesis;
+let availableVoices = [];
+
+function initSpeedPreference() {
+  const savedSpeed = localStorage.getItem(STORAGE_SPEED_KEY);
+  if (savedSpeed && ['0.75', '0.95', '1.2'].includes(savedSpeed)) {
+    speedSelect.value = savedSpeed;
+  }
+}
+
+speedSelect.addEventListener('change', () => {
+  localStorage.setItem(STORAGE_SPEED_KEY, speedSelect.value);
+});
+
+function populateVoiceOptions() {
+  if (!synth) return;
+  const allVoices = synth.getVoices() || [];
+
+  const englishVoices = allVoices.filter((v) =>
+    v.lang && v.lang.toLowerCase().startsWith('en')
+  );
+
+  englishVoices.sort((a, b) => {
+    const aScore = a.lang.toLowerCase().startsWith('en-us') ? 0 : a.lang.toLowerCase().startsWith('en-gb') ? 1 : 2;
+    const bScore = b.lang.toLowerCase().startsWith('en-us') ? 0 : b.lang.toLowerCase().startsWith('en-gb') ? 1 : 2;
+    return aScore - bScore;
+  });
+
+  availableVoices = englishVoices.slice(0, 3);
+
+  const savedVoiceName = localStorage.getItem(STORAGE_VOICE_KEY);
+  voiceSelect.innerHTML = '';
+
+  if (availableVoices.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'Default English (en-US)';
+    voiceSelect.appendChild(opt);
+    return;
+  }
+
+  availableVoices.forEach((voice, idx) => {
+    const option = document.createElement('option');
+    option.value = voice.name;
+    option.textContent = `Voice ${idx + 1}: ${voice.name} (${voice.lang})`;
+    voiceSelect.appendChild(option);
+  });
+
+  if (savedVoiceName && availableVoices.some((v) => v.name === savedVoiceName)) {
+    voiceSelect.value = savedVoiceName;
+  } else {
+    voiceSelect.value = availableVoices[0].name;
+    localStorage.setItem(STORAGE_VOICE_KEY, availableVoices[0].name);
+  }
+}
+
+voiceSelect.addEventListener('change', () => {
+  localStorage.setItem(STORAGE_VOICE_KEY, voiceSelect.value);
+});
+
+initSpeedPreference();
+populateVoiceOptions();
+if (synth && typeof synth.addEventListener === 'function') {
+  synth.addEventListener('voiceschanged', populateVoiceOptions);
+}
 
 // Fisher-Yates shuffle for random order without repetition
 function shuffleArray(array) {
@@ -96,8 +169,10 @@ function resetSessionState() {
   isTextVisible = false;
 
   progressEl.textContent = '';
+  questionImage.src = '';
+  questionImage.classList.add('hidden');
   questionText.textContent = 'Select or load a JSON to start practicing';
-  questionText.classList.remove('concealed');
+  questionText.classList.remove('concealed', 'hidden');
   userAnswerEl.textContent = '';
   starRatingEl.textContent = '';
   feedbackEl.textContent = '';
@@ -111,8 +186,17 @@ function resetSessionState() {
   nextBtn.disabled = true;
 }
 
+function normalizeBase64ImageSrc(rawImage) {
+  const trimmed = rawImage.trim();
+  if (trimmed.startsWith('data:image/')) {
+    return trimmed;
+  }
+  return `data:image/png;base64,${trimmed}`;
+}
+
 // Normaliza y valida:
 // - Solo frase: { phrase: "..." }
+// - Imagen + respuesta: { image: "base64...", answer: "..." } (o answers: ["..."])
 // - Pregunta + respuestas: { question: "...", answers: ["..."] }
 // - Solo pregunta abierta: { question: "..." }
 function parseAndNormalizeDataset(rawData) {
@@ -121,6 +205,26 @@ function parseAndNormalizeDataset(rawData) {
   }
 
   return rawData.map((item) => {
+    if (typeof item.image === 'string' && item.image.trim() !== '') {
+      const answers = Array.isArray(item.answers)
+        ? item.answers.filter((a) => typeof a === 'string' && a.trim() !== '')
+        : typeof item.answer === 'string' && item.answer.trim() !== ''
+          ? [item.answer.trim()]
+          : [];
+
+      if (answers.length === 0) {
+        throw new Error('Image item must contain "answer" (or "answers").');
+      }
+
+      return {
+        type: 'image',
+        imageSrc: normalizeBase64ImageSrc(item.image),
+        displayPrompt: `Answer: "${answers[0]}"`,
+        spokenPrompt: '',
+        expectedTargets: answers
+      };
+    }
+
     if (typeof item.phrase === 'string' && item.phrase.trim() !== '') {
       const phrase = item.phrase.trim();
       return {
@@ -147,7 +251,7 @@ function parseAndNormalizeDataset(rawData) {
       };
     }
 
-    throw new Error('Each item must contain "phrase" or "question".');
+    throw new Error('Each item must contain "image"+"answer", "phrase", or "question".');
   });
 }
 
@@ -160,8 +264,10 @@ function initializeDataset(parsedData, sourceLabel) {
 
   fileStatus.textContent = `✅ ${sourceLabel} (${originalItems.length} items)`;
   progressEl.textContent = '';
+  questionImage.src = '';
+  questionImage.classList.add('hidden');
   questionText.textContent = 'Ready. Tap "Next Item" to begin.';
-  questionText.classList.remove('concealed');
+  questionText.classList.remove('concealed', 'hidden');
   userAnswerEl.textContent = '';
   starRatingEl.textContent = '';
   feedbackEl.textContent = '';
@@ -177,8 +283,10 @@ function initializeDataset(parsedData, sourceLabel) {
 
 function handleLoadError(sourceLabel) {
   fileStatus.textContent = `❌ Error loading ${sourceLabel}`;
+  questionImage.src = '';
+  questionImage.classList.add('hidden');
   questionText.textContent = 'Check that the JSON exists and follows a valid format.';
-  questionText.classList.remove('concealed');
+  questionText.classList.remove('concealed', 'hidden');
   nextBtn.disabled = true;
   repeatBtn.disabled = true;
   micBtn.disabled = true;
@@ -226,16 +334,26 @@ fileInput.addEventListener('change', (event) => {
   reader.readAsText(file);
 });
 
-// 2. Text-to-Speech (TTS) in English
-const synth = window.speechSynthesis;
-
+// 2. Text-to-Speech (TTS) in English with selected speed & voice
 function speak(text) {
   if (!synth || !text) return;
   synth.cancel();
   setTimeout(() => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
-    utterance.rate = 0.95;
+
+    const rateValue = parseFloat(speedSelect.value);
+    utterance.rate = Number.isFinite(rateValue) ? rateValue : 0.95;
+
+    const selectedVoiceName = voiceSelect.value;
+    if (selectedVoiceName) {
+      const chosenVoice = availableVoices.find((v) => v.name === selectedVoiceName);
+      if (chosenVoice) {
+        utterance.voice = chosenVoice;
+        utterance.lang = chosenVoice.lang || 'en-US';
+      }
+    }
+
     synth.speak(utterance);
   }, 150);
 }
@@ -441,10 +559,31 @@ function renderStars(stars) {
   return `${filled}${empty} (${stars}/5)`;
 }
 
-// Renderiza la pregunta/frase respetando si está oculta o visible
+// Renderiza la pregunta/frase/imagen respetando si está oculta o visible
 function renderCurrentPrompt() {
   if (currentIndex < 0 || !shuffledItems[currentIndex]) return;
   const item = shuffledItems[currentIndex];
+
+  if (item.type === 'image') {
+    questionImage.src = item.imageSrc;
+    questionImage.classList.remove('hidden');
+
+    if (isTextVisible) {
+      questionText.textContent = item.displayPrompt;
+      questionText.classList.remove('concealed', 'hidden');
+      toggleVisibilityBtn.textContent = '🙈 Hide';
+    } else {
+      questionText.textContent = '🔒 Answer hidden — tap "Show" to reveal';
+      questionText.classList.add('concealed');
+      questionText.classList.remove('hidden');
+      toggleVisibilityBtn.textContent = '👁️ Show';
+    }
+    return;
+  }
+
+  questionImage.src = '';
+  questionImage.classList.add('hidden');
+  questionText.classList.remove('hidden');
 
   if (isTextVisible) {
     questionText.textContent = item.displayPrompt;
@@ -466,7 +605,7 @@ toggleVisibilityBtn.addEventListener('click', () => {
   renderCurrentPrompt();
 });
 
-// 4. Load next random item (hidden by default)
+// 4. Load next random item
 function loadNextItem() {
   if (shuffledItems.length === 0) return;
 
@@ -480,8 +619,8 @@ function loadNextItem() {
     statusEl.textContent = '';
   }
 
-  isTextVisible = false; // Siempre oculta por defecto
   const currentItem = shuffledItems[currentIndex];
+  isTextVisible = false;
 
   progressEl.textContent = `Item ${currentIndex + 1} of ${shuffledItems.length}`;
   renderCurrentPrompt();
@@ -491,10 +630,14 @@ function loadNextItem() {
   feedbackEl.className = 'feedback';
 
   toggleVisibilityBtn.disabled = false;
-  repeatBtn.disabled = false;
+  repeatBtn.disabled = currentItem.type === 'image' && !currentItem.spokenPrompt;
   micBtn.disabled = false;
 
-  speak(currentItem.spokenPrompt);
+  if (currentItem.type !== 'image' && currentItem.spokenPrompt) {
+    speak(currentItem.spokenPrompt);
+  } else if (synth) {
+    synth.cancel();
+  }
 }
 
 // Button listeners
@@ -502,7 +645,9 @@ nextBtn.addEventListener('click', loadNextItem);
 
 repeatBtn.addEventListener('click', () => {
   if (currentIndex >= 0) {
-    speak(shuffledItems[currentIndex].spokenPrompt);
+    const currentItem = shuffledItems[currentIndex];
+    const textToSpeak = currentItem.spokenPrompt || currentItem.expectedTargets?.[0] || '';
+    speak(textToSpeak);
   }
 });
 
@@ -552,7 +697,7 @@ if (recognition) {
         starRatingEl.textContent = '☆☆☆☆☆ (0/5)';
         feedbackEl.textContent = 'Incorrect. Save a valid Gemini API key to evaluate open questions.';
         feedbackEl.className = 'feedback incorrect';
-        console.log(err)
+        console.log(err);
       } finally {
         statusEl.textContent = '';
         micBtn.disabled = false;
@@ -560,7 +705,7 @@ if (recognition) {
       return;
     }
 
-    // Modo cerrado: frase o pregunta con respuestas esperadas
+    // Modo cerrado: frase, imagen con respuesta o pregunta con respuestas esperadas
     const result = evaluateClosedSpeech(alternatives, currentItem.expectedTargets);
     starRatingEl.textContent = renderStars(result.stars);
 

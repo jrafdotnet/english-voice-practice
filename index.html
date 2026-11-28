@@ -37,6 +37,25 @@
       <span id="api-key-status" class="file-status"></span>
     </details>
 
+    <!-- Ajustes de voz y velocidad TTS -->
+    <div class="voice-settings">
+      <div class="setting-field">
+        <label for="speed-select">⚡ Speed</label>
+        <select id="speed-select" aria-label="Speech speed">
+          <option value="0.75">Low (Baja)</option>
+          <option value="0.95" selected>Medium (Media)</option>
+          <option value="1.2">Fast (Rápida)</option>
+        </select>
+      </div>
+
+      <div class="setting-field">
+        <label for="voice-select">🗣️ Voice</label>
+        <select id="voice-select" aria-label="Select English voice">
+          <option value="">Default English Voice</option>
+        </select>
+      </div>
+    </div>
+
     <!-- Fuente del JSON: Servidor vs Subir archivo -->
     <div class="source-section">
       <div class="radio-group" role="radiogroup" aria-label="JSON Source">
@@ -58,6 +77,8 @@
           <option value="./data/questions-only.json">Open Questions (questions-only.json)</option>
           <option value="./data/qa-sample.json">Q&amp;A Sample (qa-sample.json)</option>
           <option value="./data/phrases-sample.json">Phrases Sample (phrases-sample.json)</option>
+          <option value="./data/kitchen-items-images.json">Kitchen vocabulary</option>
+
         </select>
       </div>
 
@@ -75,7 +96,10 @@
       <button type="button" id="toggle-visibility-btn" class="visibility-btn" disabled>👁️ Show</button>
     </div>
 
-    <p id="question-text" class="question">Select or load a JSON to start practicing</p>
+    <div id="prompt-area" class="prompt-area">
+      <img id="question-image" class="question-image hidden" alt="Practice item image">
+      <p id="question-text" class="question">Select or load a JSON to start practicing</p>
+    </div>
 
     <div class="controls">
       <button type="button" id="repeat-btn" disabled>🔊 Repeat</button>
